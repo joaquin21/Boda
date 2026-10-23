@@ -134,6 +134,7 @@
             padding: 2.5rem 1.5rem;
             cursor: pointer;
             transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
         }
 
         .upload-box:hover {
@@ -148,6 +149,19 @@
 
         #fileInput {
             display: none;
+        }
+
+        .input-name {
+            width: 100%;
+            max-width: 350px;
+            padding: 0.8rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.9rem;
+            text-align: center;
+            background: #fff;
         }
 
         .gallery {
@@ -220,6 +234,9 @@
         <h2 class="section-title">Comparte tus Recuerdos</h2>
         <p class="section-desc">Sube aquí las fotos que tomes durante nuestro gran día para conservarlas en nuestro álbum.</p>
         
+        <!-- Campo para identificar quién sube la foto -->
+        <input type="text" id="guestName" class="input-name" placeholder="Tu nombre o familia (Opcional)">
+
         <div class="upload-box" onclick="document.getElementById('fileInput').click()">
             <div class="upload-icon">📷</div>
             <p style="font-size: 0.9rem; color: var(--text);">Haz clic o arrastra tus fotos aquí</p>
@@ -241,12 +258,12 @@
     </footer>
 
     <script>
-        // CONFIGURACIÓN DE CLOUDINARY
         const CLOUD_NAME = "jiialc0i"; 
         const UPLOAD_PRESET = "boda_upload"; 
 
         const weddingDate = new Date("Oct 31, 2026 16:00:00").getTime();
 
+        // Cuenta regresiva
         setInterval(() => {
             const now = new Date().getTime();
             const dist = weddingDate - now;
@@ -259,13 +276,43 @@
             }
         }, 1000);
 
+        // Cargar fotos automáticamente al abrir la página desde Cloudinary
+        async function cargarGaleria() {
+            const gallery = document.getElementById("gallery");
+            try {
+                // Usamos la API pública de recursos de Cloudinary para listar las imágenes del preset
+                const res = await fetch(`https://res.cloudinary.com/${CLOUD_NAME}/image/list/${UPLOAD_PRESET}.json`);
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.resources) {
+                        gallery.innerHTML = ""; // Limpiar antes de pintar
+                        data.resources.forEach(file => {
+                            const img = document.createElement("img");
+                            // Construir la URL de la imagen optimizada
+                            img.src = `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/w_300,h_300,c_fill/${file.public_id}.${file.format}`;
+                            gallery.appendChild(img);
+                        });
+                    }
+                }
+            } catch (e) {
+                console.log("Galería vacía o cargando por primera vez.");
+            }
+        }
+
+        // Ejecutar al cargar la página
+        window.onload = cargarGaleria;
+
+        // Subir fotos a Cloudinary con el nombre del invitado opcional
         async function handleFiles(files) {
             const gallery = document.getElementById("gallery");
+            const guestName = document.getElementById("guestName").value.trim() || "Anónimo";
 
             for (const file of files) {
                 const formData = new FormData();
                 formData.append("file", file);
                 formData.append("upload_preset", UPLOAD_PRESET);
+                // Añadimos el nombre del invitado como contexto o etiqueta en Cloudinary
+                formData.append("context", `autor=${guestName}`);
 
                 try {
                     let response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
@@ -278,7 +325,7 @@
                     if (data.secure_url) {
                         const img = document.createElement("img");
                         img.src = data.secure_url;
-                        gallery.prepend(img);
+                        gallery.prepend(img); // Mostrar la nueva foto inmediatamente
                     }
                 } catch (error) {
                     console.error("Error al subir la imagen:", error);
@@ -286,6 +333,7 @@
                 }
             }
             alert("¡Foto(s) subida(s) con éxito! Gracias por compartir este momento.");
+            document.getElementById("fileInput").value = ""; // Limpiar input
         }
     </script>
 </body>
