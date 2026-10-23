@@ -232,7 +232,7 @@
 
     <section style="padding-top: 0;">
         <h2 class="section-title">Asistencia</h2>
-        <p class="section-desc">Por favor confirma tu presencia antes del 30 de Septiembre.</p>
+        <p class="section-desc">Por favor confirma tu presencia antes del 30 de Octubre</p>
         <a href="https://wa.me/5543861559?text=¡Hola!%20Confirmo%20mi%20asistencia%20a%20la%20boda%20de%20Joaquín%20y%20Karime" class="btn" target="_blank">Confirmar por WhatsApp</a>
     </section>
 
@@ -241,6 +241,10 @@
     </footer>
 
     <script>
+        // CONFIGURACIÓN DE CLOUDINARY
+        const CLOUD_NAME = "jiialc0i"; 
+        const UPLOAD_PRESET = "boda_upload"; 
+
         const weddingDate = new Date("Oct 31, 2026 16:00:00").getTime();
 
         setInterval(() => {
@@ -255,17 +259,33 @@
             }
         }, 1000);
 
-        function handleFiles(files) {
+        async function handleFiles(files) {
             const gallery = document.getElementById("gallery");
-            Array.from(files).forEach(file => {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const img = document.createElement("img");
-                    img.src = e.target.result;
-                    gallery.appendChild(img);
-                };
-                reader.readAsDataURL(file);
-            });
+
+            for (const file of files) {
+                const formData = new FormData();
+                formData.append("file", file);
+                formData.append("upload_preset", UPLOAD_PRESET);
+
+                try {
+                    let response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
+                        method: "POST",
+                        body: formData
+                    });
+
+                    let data = await response.json();
+                    
+                    if (data.secure_url) {
+                        const img = document.createElement("img");
+                        img.src = data.secure_url;
+                        gallery.prepend(img);
+                    }
+                } catch (error) {
+                    console.error("Error al subir la imagen:", error);
+                    alert("Hubo un error al subir tu foto. Inténtalo de nuevo.");
+                }
+            }
+            alert("¡Foto(s) subida(s) con éxito! Gracias por compartir este momento.");
         }
     </script>
 </body>
