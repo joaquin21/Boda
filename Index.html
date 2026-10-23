@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Joaquín & Karime — Riviera Maya</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400&family=Montserrat:wght@200;300;400&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #faf8f5;
+            --text: #2c2a29;
+            --muted: #8c857b;
+            --accent: #b09e80;
+            --card-bg: #ffffff;
+            --border: #ebd3c8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.8;
+            text-align: center;
+            font-weight: 300;
+        }
+
+        h1, h2, h3, .serif {
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 400;
+        }
+
+        /* Hero */
+        header {
+            min-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 3rem 1.5rem;
+            background: linear-gradient(180deg, rgba(250,248,245,0.3) 0%, rgba(250,248,245,1) 100%),
+                        url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80') center/cover no-repeat;
+        }
+
+        .subtitle {
+            font-size: 0.85rem;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 2rem;
+        }
+
+        .names {
+            font-size: clamp(3rem, 8vw, 5.5rem);
+            line-height: 1.1;
+            margin-bottom: 2rem;
+            color: var(--text);
+            font-style: italic;
+        }
+
+        .details-hero {
+            font-size: 1.1rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--text);
+            border-top: 1px solid var(--accent);
+            border-bottom: 1px solid var(--accent);
+            padding: 0.8rem 2rem;
+        }
+
+        /* Sections */
+        section {
+            padding: 4rem 1.5rem;
+            max-width: 750px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 2.2rem;
+            color: var(--text);
+            margin-bottom: 1rem;
+        }
+
+        .section-desc {
+            color: var(--muted);
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Countdown */
+        .countdown {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+
+        .time-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .time-num {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.8rem;
+            line-height: 1;
+            color: var(--accent);
+        }
+
+        .time-label {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--muted);
+            margin-top: 0.3rem;
+        }
+
+        /* Upload Area */
+        .upload-box {
+            background: var(--card-bg);
+            border: 1px dashed var(--accent);
+            border-radius: 8px;
+            padding: 2.5rem 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .upload-box:hover {
+            background: #faf6f0;
+        }
+
+        .upload-icon {
+            font-size: 2rem;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 10px;
+            margin-top: 2rem;
+        }
+
+        .gallery img {
+            width: 100%;
+            height: 130px;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+
+        /* Button */
+        .btn {
+            display: inline-block;
+            margin-top: 1.5rem;
+            padding: 0.9rem 2.5rem;
+            border: 1px solid var(--text);
+            background: transparent;
+            color: var(--text);
+            text-decoration: none;
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: var(--text);
+            color: var(--bg);
+        }
+
+        footer {
+            padding: 4rem 1.5rem 2rem;
+            font-size: 0.8rem;
+            color: var(--muted);
+            letter-spacing: 1px;
+        }
+
+        @media (max-width: 600px) {
+            .countdown { gap: 1rem; }
+            .time-num { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <p class="subtitle">Nos Casamos</p>
+        <h1 class="names">Joaquín &amp; Karime</h1>
+        <p class="details-hero">31 DE OCTUBRE DE 2026<br><span style="font-size: 0.85rem; font-family: 'Montserrat'; text-transform: none; letter-spacing: 1px; color: var(--muted);">Riviera Maya — Hotel Barceló</span></p>
+    </header>
+
+    <section>
+        <div class="countdown">
+            <div class="time-item"><span class="time-num" id="days">00</span><span class="time-label">Días</span></div>
+            <div class="time-item"><span class="time-num" id="hours">00</span><span class="time-label">Horas</span></div>
+            <div class="time-item"><span class="time-num" id="minutes">00</span><span class="time-label">Min</span></div>
+            <div class="time-item"><span class="time-num" id="seconds">00</span><span class="time-label">Seg</span></div>
+        </div>
+    </section>
+
+    <hr style="border: 0; border-top: 1px solid #e8e2d8; max-width: 200px; margin: 0 auto;">
+
+    <section>
+        <h2 class="section-title">Comparte tus Recuerdos</h2>
+        <p class="section-desc">Sube aquí las fotos que tomes durante nuestro gran día para conservarlas en nuestro álbum.</p>
+        
+        <div class="upload-box" onclick="document.getElementById('fileInput').click()">
+            <div class="upload-icon">📷</div>
+            <p style="font-size: 0.9rem; color: var(--text);">Haz clic o arrastra tus fotos aquí</p>
+            <span style="font-size: 0.75rem; color: var(--muted);">Formatos aceptados: JPG, PNG</span>
+            <input type="file" id="fileInput" accept="image/*" multiple onchange="handleFiles(this.files)">
+        </div>
+
+        <div class="gallery" id="gallery"></div>
+    </section>
+
+    <section style="padding-top: 0;">
+        <h2 class="section-title">Asistencia</h2>
+        <p class="section-desc">Por favor confirma tu presencia antes del 30 de Septiembre.</p>
+        <a href="https://wa.me/1234567890?text=¡Hola!%20Confirmo%20mi%20asistencia%20a%20la%20boda%20de%20Joaquín%20y%20Karime" class="btn" target="_blank">Confirmar por WhatsApp</a>
+    </section>
+
+    <footer>
+        <p>J &amp; K — 2026</p>
+    </footer>
+
+    <script>
+        const weddingDate = new Date("Oct 31, 2026 16:00:00").getTime();
+
+        setInterval(() => {
+            const now = new Date().getTime();
+            const dist = weddingDate - now;
+
+            if (dist > 0) {
+                document.getElementById("days").innerText = Math.floor(dist / (1000 * 60 * 60 * 24)).toString().padStart(2, '0');
+                document.getElementById("hours").innerText = Math.floor((dist % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2, '0');
+                document.getElementById("minutes").innerText = Math.floor((dist % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
+                document.getElementById("seconds").innerText = Math.floor((dist % (1000 * 60)) / 1000).toString().padStart(2, '0');
+            }
+        }, 1000);
+
+        function handleFiles(files) {
+            const gallery = document.getElementById("gallery");
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = document.createElement("img");
+                    img.src = e.target.result;
+                    gallery.appendChild(img);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+    </script>
+</body>
+</html>
