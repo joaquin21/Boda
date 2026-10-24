@@ -164,18 +164,37 @@
             background: #fff;
         }
 
+        /* Gallery Grid */
         .gallery {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-            gap: 10px;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 15px;
             margin-top: 2rem;
         }
 
-        .gallery img {
+        .photo-card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .photo-card img {
             width: 100%;
-            height: 130px;
+            height: 150px;
             object-fit: cover;
-            border-radius: 6px;
+        }
+
+        .photo-author {
+            padding: 0.6rem;
+            font-size: 0.75rem;
+            color: var(--muted);
+            background: #fff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         /* Button */
@@ -260,7 +279,7 @@
     <script>
         const CLOUD_NAME = "jiialc0i"; 
         const UPLOAD_PRESET = "boda_upload"; 
-        const FOLDER_NAME = "boda-riviera-maya"; // Carpeta exclusiva para las fotos de la boda
+        const FOLDER_NAME = "boda-riviera-maya"; 
 
         const weddingDate = new Date("Oct 31, 2026 16:00:00").getTime();
 
@@ -277,20 +296,41 @@
             }
         }, 1000);
 
-        // Cargar únicamente las fotos de la carpeta de la boda
-        async function cargarGaleria() {
+        // Función auxiliar para agregar una tarjeta de foto con su autor a la galería
+        function agregarFotoAGaleria(url, autor) {
             const gallery = document.getElementById("gallery");
+            
+            const card = document.createElement("div");
+            card.className = "photo-card";
+
+            const img = document.createElement("img");
+            img.src = url;
+
+            const authorDiv = document.createElement("div");
+            authorDiv.className = "photo-author";
+            authorDiv.innerText = `📸 ${autor || "Invitado"}`;
+
+            card.appendChild(img);
+            card.appendChild(authorDiv);
+            gallery.prepend(card); // Las fotos más recientes van al principio
+        }
+
+        // Cargar galería guardada en Cloudinary
+        async function cargarGaleria() {
             try {
-                // Pide a Cloudinary solo las imágenes que estén dentro de la carpeta de la boda
                 const res = await fetch(`https://res.cloudinary.com/${CLOUD_NAME}/image/list/${FOLDER_NAME}.json`);
                 if (res.ok) {
                     const data = await res.json();
                     if (data.resources) {
-                        gallery.innerHTML = ""; 
+                        document.getElementById("gallery").innerHTML = ""; 
                         data.resources.forEach(file => {
-                            const img = document.createElement("img");
-                            img.src = `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/w_300,h_300,c_fill/${file.public_id}.${file.format}`;
-                            gallery.appendChild(img);
+                            const imageUrl = `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/w_300,h_300,c_fill/${file.public_id}.${file.format}`;
+                            // Intentar recuperar el autor si está guardado en el contexto
+                            let autorNombre = "Invitado";
+                            if (file.context && file.context.custom && file.context.custom.autor) {
+                                autorNombre = file.context.custom.autor;
+                            }
+                            agregarFotoAGaleria(imageUrl, autorNombre);
                         });
                     }
                 }
@@ -302,16 +342,15 @@
         // Ejecutar al cargar la página
         window.onload = cargarGaleria;
 
-        // Subir fotos mandándolas directo a la carpeta de la boda
+        // Subir fotos a la carpeta y mostrarlas inmediatamente con el nombre
         async function handleFiles(files) {
-            const gallery = document.getElementById("gallery");
-            const guestName = document.getElementById("guestName").value.trim() || "Anónimo";
+            const guestName = document.getElementById("guestName").value.trim() || "Invitado";
 
             for (const file of files) {
                 const formData = new FormData();
                 formData.append("file", file);
                 formData.append("upload_preset", UPLOAD_PRESET);
-                formData.append("folder", FOLDER_NAME); // Organiza la foto dentro de la carpeta exclusiva
+                formData.append("folder", FOLDER_NAME); 
                 formData.append("context", `autor=${guestName}`);
 
                 try {
@@ -323,9 +362,7 @@
                     let data = await response.json();
                     
                     if (data.secure_url) {
-                        const img = document.createElement("img");
-                        img.src = data.secure_url;
-                        gallery.prepend(img); 
+                        agregarFotoAGaleria(data.secure_url, guestName);
                     }
                 } catch (error) {
                     console.error("Error al subir la imagen:", error);
