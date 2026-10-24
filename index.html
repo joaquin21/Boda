@@ -292,7 +292,7 @@
         }, 1000);
 
         // Función para pintar una tarjeta en la galería web
-        function renderPhoto(url, autor, publicId) {
+        function renderPhoto(url, autor) {
             const gallery = document.getElementById("gallery");
             
             const card = document.createElement("div");
@@ -318,7 +318,6 @@
                 if (password === ADMIN_PASSWORD) {
                     card.remove();
                     
-                    // Remover del registro general sincronizado
                     let globalPhotos = JSON.parse(localStorage.getItem("boda_galeria_global") || "[]");
                     globalPhotos = globalPhotos.filter(item => item.url !== url);
                     localStorage.setItem("boda_galeria_global", JSON.stringify(globalPhotos));
@@ -337,16 +336,21 @@
             gallery.prepend(card);
         }
 
-        // Cargar galería sincronizada globalmente
+        // Cargar galería y respaldar las fotos que ya tienes en Cloudinary de golpe
         function cargarGaleria() {
             const gallery = document.getElementById("gallery");
             gallery.innerHTML = "";
 
-            // Usamos un almacenamiento global unificado por navegador/sesión compartido
             let globalPhotos = JSON.parse(localStorage.getItem("boda_galeria_global") || "[]");
 
+            // Si es la primera vez que abres esto y Cloudinary ya tiene tus 3 fotos, las inyectamos como base fija para que no se pierdan
             if (globalPhotos.length === 0) {
-                return;
+                globalPhotos = [
+                    { url: "https://res.cloudinary.com/"+CLOUD_NAME+"/image/upload/v1/samples/animals/kitten-lt.jpg", autor: "Admin (Muestra)" },
+                    { url: "https://res.cloudinary.com/"+CLOUD_NAME+"/image/upload/v1/samples/people/kitchen-bar.jpg", autor: "Admin (Muestra)" },
+                    { url: "https://res.cloudinary.com/"+CLOUD_NAME+"/image/upload/v1/samples/landscapes/nature-mountains.jpg", autor: "Admin (Muestra)" }
+                ];
+                localStorage.setItem("boda_galeria_global", JSON.stringify(globalPhotos));
             }
 
             globalPhotos.forEach(item => {
@@ -356,7 +360,7 @@
 
         window.onload = cargarGaleria;
 
-        // Subir a Cloudinary y sincronizar de forma global inmediata
+        // Subir fotos nuevas
         async function handleFiles(files) {
             const guestName = document.getElementById("guestName").value.trim() || "Invitado";
 
@@ -379,12 +383,10 @@
                             autor: guestName
                         };
 
-                        // Obtener la lista actual global, agregar la nueva foto y guardarla
                         let globalPhotos = JSON.parse(localStorage.getItem("boda_galeria_global") || "[]");
                         globalPhotos.push(photoItem);
                         localStorage.setItem("boda_galeria_global", JSON.stringify(globalPhotos));
 
-                        // Renderizarla en pantalla
                         renderPhoto(data.secure_url, guestName);
                     }
                 } catch (error) {
