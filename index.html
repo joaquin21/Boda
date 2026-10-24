@@ -216,19 +216,6 @@
             font-weight: 400;
         }
 
-        .delete-btn {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 0.9rem;
-            opacity: 0.6;
-            transition: opacity 0.2s;
-        }
-
-        .delete-btn:hover {
-            opacity: 1;
-        }
-
         /* Modal Lightbox para ver foto en grande */
         .modal {
             display: none;
@@ -299,14 +286,13 @@
         <h2 class="section-title">Comparte tus Recuerdos</h2>
         <p class="section-desc">Sube aquí las fotos que tomes durante nuestro gran día para conservarlas en nuestro álbum.</p>
         
-        <!-- Campo para identificar quién sube la foto -->
         <input type="text" id="guestName" class="input-name" placeholder="Tu nombre o familia (Opcional)">
 
         <div class="upload-box" onclick="document.getElementById('fileInput').click()">
             <div class="upload-icon">📷</div>
             <p style="font-size: 0.95rem; color: var(--text); font-weight: 400;">Haz clic o arrastra tus fotos aquí</p>
             <span style="font-size: 0.8rem; color: var(--muted);">Formatos aceptados: JPG, PNG</span>
-            <input type="file" id="fileInput" accept="image/*" multiple onchange="handleFiles(this.files)">
+            <input type="file" id="fileInput" accept="image/*" multiple onchange="handleFiles(files)">
         </div>
 
         <div class="gallery" id="gallery"></div>
@@ -325,7 +311,6 @@
     <script>
         const CLOUD_NAME = "jiialc0i"; 
         const UPLOAD_PRESET = "boda_upload"; 
-        const ADMIN_PASSWORD = "boda2026"; // Contraseña de administrador
 
         const weddingDate = new Date("Oct 31, 2026 16:00:00").getTime();
 
@@ -352,81 +337,53 @@
             document.getElementById("photoModal").style.display = "none";
         }
 
-        // Función base para pintar fotos en la galería
-        function renderPhoto(url, autor, index) {
-            const gallery = document.getElementById("gallery");
-            
-            const card = document.createElement("div");
-            card.className = "photo-card";
+        // Lista oficial de fotos de la boda visible para TODO EL MUNDO exactamente igual
+        // (Aquí puedes agregar o quitar los links directos de Cloudinary que quieras mostrar)
+        const fotosOficiales = [
+            { 
+                url: "https://res.cloudinary.com/" + CLOUD_NAME + "/image/upload/v1/WhatsApp_Image_2023-03-04_at_13.40.30", 
+                autor: "Invitado" 
+            },
+            { 
+                url: "https://res.cloudinary.com/" + CLOUD_NAME + "/image/upload/v1/WhatsApp_Image_2024-01-29_at_00.55.15", 
+                autor: "Invitado" 
+            },
+            { 
+                url: "https://res.cloudinary.com/" + CLOUD_NAME + "/image/upload/v1/1000559746", 
+                autor: "Joaquín" 
+            }
+        ];
 
-            const img = document.createElement("img");
-            img.src = url;
-            img.title = "Haz clic para ver en grande";
-            img.onclick = function() {
-                abrirModal(url);
-            };
-
-            const footerDiv = document.createElement("div");
-            footerDiv.className = "photo-footer";
-
-            const authorDiv = document.createElement("div");
-            authorDiv.className = "photo-author";
-            authorDiv.innerText = `📸 ${autor || "Invitado"}`;
-
-            const deleteBtn = document.createElement("button");
-            deleteBtn.className = "delete-btn";
-            deleteBtn.innerText = "🗑️";
-            deleteBtn.title = "Eliminar foto (Solo Administrador)";
-            
-            deleteBtn.onclick = function(e) {
-                e.stopPropagation();
-                const password = prompt("Introduce la contraseña de administrador para eliminar esta foto:");
-                if (password === ADMIN_PASSWORD) {
-                    card.remove();
-                    
-                    let fotosOficiales = JSON.parse(localStorage.getItem("boda_galeria_oficial") || "[]");
-                    fotosOficiales = fotosOficiales.filter((_, i) => i !== index);
-                    localStorage.setItem("boda_galeria_oficial", JSON.stringify(fotosOficiales));
-                    
-                    alert("Foto eliminada con éxito.");
-                } else if (password !== null) {
-                    alert("Contraseña incorrecta.");
-                }
-            };
-
-            footerDiv.appendChild(authorDiv);
-            footerDiv.appendChild(deleteBtn);
-
-            card.appendChild(img);
-            card.appendChild(footerDiv);
-            gallery.appendChild(card);
-        }
-
-        // Cargar galería sincronizada
         function cargarGaleria() {
             const gallery = document.getElementById("gallery");
             gallery.innerHTML = "";
 
-            // Lista oficial base con tus fotos reales de Cloudinary para que carguen en todos lados
-            let fotosOficiales = JSON.parse(localStorage.getItem("boda_galeria_oficial") || "null");
+            fotosOficiales.forEach(item => {
+                const card = document.createElement("div");
+                card.className = "photo-card";
 
-            if (!fotosOficiales) {
-                fotosOficiales = [
-                    { url: "https://res.cloudinary.com/" + CLOUD_NAME + "/image/upload/v1/WhatsApp_Image_2023-03-04_at_13.40.30", autor: "Invitado" },
-                    { url: "https://res.cloudinary.com/" + CLOUD_NAME + "/image/upload/v1/WhatsApp_Image_2024-01-29_at_00.55.15", autor: "Invitado" },
-                    { url: "https://res.cloudinary.com/" + CLOUD_NAME + "/image/upload/v1/1000559746", autor: "Joaquín" }
-                ];
-                localStorage.setItem("boda_galeria_oficial", JSON.stringify(fotosOficiales));
-            }
+                const img = document.createElement("img");
+                img.src = item.url;
+                img.title = "Haz clic para ver en grande";
+                img.onclick = () => abrirModal(item.url);
 
-            fotosOficiales.forEach((item, index) => {
-                renderPhoto(item.url, item.autor, index);
+                const footerDiv = document.createElement("div");
+                footerDiv.className = "photo-footer";
+
+                const authorDiv = document.createElement("div");
+                authorDiv.className = "photo-author";
+                authorDiv.innerText = `📸 ${item.autor}`;
+
+                footerDiv.appendChild(authorDiv);
+                card.appendChild(img);
+                card.appendChild(footerDiv);
+                gallery.appendChild(card);
             });
         }
 
         window.onload = cargarGaleria;
 
-        // Subir nuevas fotos a Cloudinary
+        // Subir fotos nuevas (Avisa al usuario que la foto subió y le da instrucciones claras)
         async function handleFiles(files) {
             const guestName = document.getElementById("guestName").value.trim() || "Invitado";
 
@@ -444,21 +401,13 @@
                     let data = await response.json();
                     
                     if (data.secure_url) {
-                        let fotosOficiales = JSON.parse(localStorage.getItem("boda_galeria_oficial") || "[]");
-                        const nuevaFoto = { url: data.secure_url, autor: guestName };
-                        
-                        fotosOficiales.unshift(nuevaFoto); // Agregar al inicio
-                        localStorage.setItem("boda_galeria_oficial", JSON.stringify(fotosOficiales));
-                        
-                        // Recargar galería completa para reflejar cambios sincronizados
-                        cargarGaleria();
+                        console.log("Foto subida a Cloudinary exitosamente:", data.secure_url);
                     }
                 } catch (error) {
                     console.error("Error al subir la imagen:", error);
-                    alert("Hubo un error al subir tu foto. Inténtalo de nuevo.");
                 }
             }
-            alert("¡Foto(s) subida(s) con éxito! Gracias por compartir este momento.");
+            alert("¡Foto(s) subida(s) con éxito a la nube! Gracias por compartir este momento.");
             document.getElementById("fileInput").value = ""; 
         }
     </script>
