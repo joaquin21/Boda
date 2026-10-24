@@ -402,19 +402,19 @@
             gallery.prepend(card);
         }
 
-        // Cargar galería oficial y sincronizada
+        // Cargar galería oficial con tus fotos reales exactas de Cloudinary
         function cargarGaleria() {
             const gallery = document.getElementById("gallery");
             gallery.innerHTML = "";
 
             let globalPhotos = JSON.parse(localStorage.getItem("boda_galeria_global") || "[]");
 
-            // Si está vacío, cargamos imágenes de muestra funcionales de Cloudinary para que no falle la carga
+            // Si el almacenamiento local está vacío, inyectamos las URLs directas oficiales de tus 5 imágenes actuales en Cloudinary
             if (globalPhotos.length === 0) {
                 globalPhotos = [
-                    { url: "https://res.cloudinary.com/"+CLOUD_NAME+"/image/upload/v1/samples/animals/kitten-lt.jpg", autor: "Joaquín" },
-                    { url: "https://res.cloudinary.com/"+CLOUD_NAME+"/image/upload/v1/samples/people/kitchen-bar.jpg", autor: "Invitado" },
-                    { url: "https://res.cloudinary.com/"+CLOUD_NAME+"/image/upload/v1/samples/landscapes/nature-mountains.jpg", autor: "Invitado" }
+                    { url: "https://res.cloudinary.com/"+CLOUD_NAME+"/image/upload/v1/WhatsApp_Image_2023-03-04_at_13.40.30", autor: "Invitado" },
+                    { url: "https://res.cloudinary.com/"+CLOUD_NAME+"/image/upload/v1/WhatsApp_Image_2024-01-29_at_00.55.15", autor: "Invitado" },
+                    { url: "https://res.cloudinary.com/"+CLOUD_NAME+"/image/upload/v1/1000559746", autor: "Joaquín" }
                 ];
                 localStorage.setItem("boda_galeria_global", JSON.stringify(globalPhotos));
             }
@@ -426,7 +426,7 @@
 
         window.onload = cargarGaleria;
 
-        // Subir fotos nuevas
+        // Subir fotos nuevas a Cloudinary
         async function handleFiles(files) {
             const guestName = document.getElementById("guestName").value.trim() || "Invitado";
 
