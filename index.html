@@ -279,7 +279,6 @@
     <script>
         const CLOUD_NAME = "jiialc0i"; 
         const UPLOAD_PRESET = "boda_upload"; 
-        const FOLDER_NAME = "boda-riviera-maya"; 
 
         const weddingDate = new Date("Oct 31, 2026 16:00:00").getTime();
 
@@ -296,8 +295,8 @@
             }
         }, 1000);
 
-        // Función auxiliar para agregar una tarjeta de foto con su autor a la galería
-        function agregarFotoAGaleria(url, autor) {
+        // Función para pintar una tarjeta de foto en la galería web
+        function renderPhoto(url, autor) {
             const gallery = document.getElementById("gallery");
             
             const card = document.createElement("div");
@@ -312,37 +311,23 @@
 
             card.appendChild(img);
             card.appendChild(authorDiv);
-            gallery.prepend(card); // Las fotos más recientes van al principio
+            gallery.prepend(card); // Las más recientes aparecen primero
         }
 
-        // Cargar galería guardada en Cloudinary
-        async function cargarGaleria() {
-            try {
-                const res = await fetch(`https://res.cloudinary.com/${CLOUD_NAME}/image/list/${FOLDER_NAME}.json`);
-                if (res.ok) {
-                    const data = await res.json();
-                    if (data.resources) {
-                        document.getElementById("gallery").innerHTML = ""; 
-                        data.resources.forEach(file => {
-                            const imageUrl = `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/w_300,h_300,c_fill/${file.public_id}.${file.format}`;
-                            // Intentar recuperar el autor si está guardado en el contexto
-                            let autorNombre = "Invitado";
-                            if (file.context && file.context.custom && file.context.custom.autor) {
-                                autorNombre = file.context.custom.autor;
-                            }
-                            agregarFotoAGaleria(imageUrl, autorNombre);
-                        });
-                    }
-                }
-            } catch (e) {
-                console.log("Aún no hay fotos en la galería.");
-            }
+        // Cargar fotos guardadas al abrir la página
+        function cargarGaleriaLocal() {
+            const savedPhotos = JSON.parse(localStorage.getItem("boda_fotos") || "[]");
+            const gallery = document.getElementById("gallery");
+            gallery.innerHTML = "";
+            savedPhotos.forEach(item => {
+                renderPhoto(item.url, item.autor);
+            });
         }
 
         // Ejecutar al cargar la página
-        window.onload = cargarGaleria;
+        window.onload = cargarGaleriaLocal;
 
-        // Subir fotos a la carpeta y mostrarlas inmediatamente con el nombre
+        // Subir a Cloudinary y guardar en la galería de la página
         async function handleFiles(files) {
             const guestName = document.getElementById("guestName").value.trim() || "Invitado";
 
@@ -350,8 +335,6 @@
                 const formData = new FormData();
                 formData.append("file", file);
                 formData.append("upload_preset", UPLOAD_PRESET);
-                formData.append("folder", FOLDER_NAME); 
-                formData.append("context", `autor=${guestName}`);
 
                 try {
                     let response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
@@ -362,7 +345,13 @@
                     let data = await response.json();
                     
                     if (data.secure_url) {
-                        agregarFotoAGaleria(data.secure_url, guestName);
+                        // Mostrar en la pantalla inmediatamente
+                        renderPhoto(data.secure_url, guestName);
+
+                        // Guardar en la memoria del navegador para que no se borren
+                        const savedPhotos = JSON.parse(localStorage.getItem("boda_fotos") || "[]");
+                        savedPhotos.push({ url: data.secure_url, autor: guestName });
+                        localStorage.setItem("boda_fotos", JSON.stringify(savedPhotos));
                     }
                 } catch (error) {
                     console.error("Error al subir la imagen:", error);
