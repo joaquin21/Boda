@@ -274,7 +274,7 @@
     <script>
         const CLOUD_NAME = "jiialc0i"; 
         const UPLOAD_PRESET = "boda_upload"; 
-        const ADMIN_PASSWORD = "boda2026"; // Contraseña para administrador
+        const ADMIN_PASSWORD = "boda2026"; // Contraseña de administrador
 
         const weddingDate = new Date("Oct 31, 2026 16:00:00").getTime();
 
@@ -336,14 +336,13 @@
             gallery.prepend(card);
         }
 
-        // Cargar galería y respaldar las fotos que ya tienes en Cloudinary de golpe
+        // Cargar galería y respaldar las fotos de Cloudinary
         function cargarGaleria() {
             const gallery = document.getElementById("gallery");
             gallery.innerHTML = "";
 
             let globalPhotos = JSON.parse(localStorage.getItem("boda_galeria_global") || "[]");
 
-            // Si es la primera vez que abres esto y Cloudinary ya tiene tus 3 fotos, las inyectamos como base fija para que no se pierdan
             if (globalPhotos.length === 0) {
                 globalPhotos = [
                     { url: "https://res.cloudinary.com/"+CLOUD_NAME+"/image/upload/v1/samples/animals/kitten-lt.jpg", autor: "Admin (Muestra)" },
