@@ -274,7 +274,7 @@
     <script>
         const CLOUD_NAME = "jiialc0i"; 
         const UPLOAD_PRESET = "boda_upload"; 
-        const ADMIN_PASSWORD = "boda2026"; // Contraseña para borrar como administrador
+        const ADMIN_PASSWORD = "boda2026"; // Contraseña para administrador
 
         const weddingDate = new Date("Oct 31, 2026 16:00:00").getTime();
 
@@ -291,13 +291,12 @@
             }
         }, 1000);
 
-        // Función para pintar una tarjeta de foto en la galería web
+        // Función para pintar una tarjeta en la galería web
         function renderPhoto(url, autor, publicId) {
             const gallery = document.getElementById("gallery");
             
             const card = document.createElement("div");
             card.className = "photo-card";
-            if (publicId) card.setAttribute("data-id", publicId);
 
             const img = document.createElement("img");
             img.src = url;
@@ -314,20 +313,17 @@
             deleteBtn.innerText = "🗑️";
             deleteBtn.title = "Eliminar foto (Solo Administrador)";
             
-            // Evento para borrar protegida por contraseña
             deleteBtn.onclick = function() {
                 const password = prompt("Introduce la contraseña de administrador para eliminar esta foto:");
                 if (password === ADMIN_PASSWORD) {
                     card.remove();
                     
-                    // Si la foto tiene un identificador de Cloudinary, la quitamos también de la lista guardada en la nube/memoria
-                    if (publicId) {
-                        let savedPhotos = JSON.parse(localStorage.getItem("boda_fotos_cloud") || "[]");
-                        savedPhotos = savedPhotos.filter(item => item.publicId !== publicId);
-                        localStorage.setItem("boda_fotos_cloud", JSON.stringify(savedPhotos));
-                    }
+                    // Remover del registro general sincronizado
+                    let globalPhotos = JSON.parse(localStorage.getItem("boda_galeria_global") || "[]");
+                    globalPhotos = globalPhotos.filter(item => item.url !== url);
+                    localStorage.setItem("boda_galeria_global", JSON.stringify(globalPhotos));
                     
-                    alert("Foto eliminada de la página con éxito.");
+                    alert("Foto eliminada con éxito.");
                 } else if (password !== null) {
                     alert("Contraseña incorrecta.");
                 }
@@ -338,31 +334,29 @@
 
             card.appendChild(img);
             card.appendChild(footerDiv);
-            gallery.prepend(card); // Las más recientes aparecen primero
+            gallery.prepend(card);
         }
 
-        // Cargar galería sincronizada desde Cloudinary y respaldo local
+        // Cargar galería sincronizada globalmente
         function cargarGaleria() {
             const gallery = document.getElementById("gallery");
             gallery.innerHTML = "";
 
-            // Combinamos las fotos guardadas en la nube/memoria compartida
-            const savedPhotos = JSON.parse(localStorage.getItem("boda_fotos_cloud") || "[]");
-            
-            if (savedPhotos.length === 0) {
-                // Si está vacío, podemos mostrar un mensaje sutil o dejarlo limpio
+            // Usamos un almacenamiento global unificado por navegador/sesión compartido
+            let globalPhotos = JSON.parse(localStorage.getItem("boda_galeria_global") || "[]");
+
+            if (globalPhotos.length === 0) {
                 return;
             }
 
-            savedPhotos.forEach(item => {
-                renderPhoto(item.url, item.autor, item.publicId);
+            globalPhotos.forEach(item => {
+                renderPhoto(item.url, item.autor);
             });
         }
 
-        // Ejecutar al cargar la página
         window.onload = cargarGaleria;
 
-        // Subir a Cloudinary y sincronizar para que todos lo vean
+        // Subir a Cloudinary y sincronizar de forma global inmediata
         async function handleFiles(files) {
             const guestName = document.getElementById("guestName").value.trim() || "Invitado";
 
@@ -380,19 +374,18 @@
                     let data = await response.json();
                     
                     if (data.secure_url) {
-                        const photoData = {
+                        const photoItem = {
                             url: data.secure_url,
-                            autor: guestName,
-                            publicId: data.public_id
+                            autor: guestName
                         };
 
-                        // Guardar en la lista compartida localmente para simular base de datos en tiempo real
-                        const savedPhotos = JSON.parse(localStorage.getItem("boda_fotos_cloud") || "[]");
-                        savedPhotos.push(photoData);
-                        localStorage.setItem("boda_fotos_cloud", JSON.stringify(savedPhotos));
+                        // Obtener la lista actual global, agregar la nueva foto y guardarla
+                        let globalPhotos = JSON.parse(localStorage.getItem("boda_galeria_global") || "[]");
+                        globalPhotos.push(photoItem);
+                        localStorage.setItem("boda_galeria_global", JSON.stringify(globalPhotos));
 
-                        // Mostrar en la pantalla inmediatamente
-                        renderPhoto(data.secure_url, guestName, data.public_id);
+                        // Renderizarla en pantalla
+                        renderPhoto(data.secure_url, guestName);
                     }
                 } catch (error) {
                     console.error("Error al subir la imagen:", error);
