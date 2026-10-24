@@ -260,6 +260,7 @@
     <script>
         const CLOUD_NAME = "jiialc0i"; 
         const UPLOAD_PRESET = "boda_upload"; 
+        const FOLDER_NAME = "boda-riviera-maya"; // Carpeta exclusiva para las fotos de la boda
 
         const weddingDate = new Date("Oct 31, 2026 16:00:00").getTime();
 
@@ -276,33 +277,32 @@
             }
         }, 1000);
 
-        // Cargar fotos automáticamente al abrir la página desde Cloudinary
+        // Cargar únicamente las fotos de la carpeta de la boda
         async function cargarGaleria() {
             const gallery = document.getElementById("gallery");
             try {
-                // Usamos la API pública de recursos de Cloudinary para listar las imágenes del preset
-                const res = await fetch(`https://res.cloudinary.com/${CLOUD_NAME}/image/list/${UPLOAD_PRESET}.json`);
+                // Pide a Cloudinary solo las imágenes que estén dentro de la carpeta de la boda
+                const res = await fetch(`https://res.cloudinary.com/${CLOUD_NAME}/image/list/${FOLDER_NAME}.json`);
                 if (res.ok) {
                     const data = await res.json();
                     if (data.resources) {
-                        gallery.innerHTML = ""; // Limpiar antes de pintar
+                        gallery.innerHTML = ""; 
                         data.resources.forEach(file => {
                             const img = document.createElement("img");
-                            // Construir la URL de la imagen optimizada
                             img.src = `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/w_300,h_300,c_fill/${file.public_id}.${file.format}`;
                             gallery.appendChild(img);
                         });
                     }
                 }
             } catch (e) {
-                console.log("Galería vacía o cargando por primera vez.");
+                console.log("Aún no hay fotos en la galería.");
             }
         }
 
         // Ejecutar al cargar la página
         window.onload = cargarGaleria;
 
-        // Subir fotos a Cloudinary con el nombre del invitado opcional
+        // Subir fotos mandándolas directo a la carpeta de la boda
         async function handleFiles(files) {
             const gallery = document.getElementById("gallery");
             const guestName = document.getElementById("guestName").value.trim() || "Anónimo";
@@ -311,7 +311,7 @@
                 const formData = new FormData();
                 formData.append("file", file);
                 formData.append("upload_preset", UPLOAD_PRESET);
-                // Añadimos el nombre del invitado como contexto o etiqueta en Cloudinary
+                formData.append("folder", FOLDER_NAME); // Organiza la foto dentro de la carpeta exclusiva
                 formData.append("context", `autor=${guestName}`);
 
                 try {
@@ -325,7 +325,7 @@
                     if (data.secure_url) {
                         const img = document.createElement("img");
                         img.src = data.secure_url;
-                        gallery.prepend(img); // Mostrar la nueva foto inmediatamente
+                        gallery.prepend(img); 
                     }
                 } catch (error) {
                     console.error("Error al subir la imagen:", error);
@@ -333,7 +333,7 @@
                 }
             }
             alert("¡Foto(s) subida(s) con éxito! Gracias por compartir este momento.");
-            document.getElementById("fileInput").value = ""; // Limpiar input
+            document.getElementById("fileInput").value = ""; 
         }
     </script>
 </body>
