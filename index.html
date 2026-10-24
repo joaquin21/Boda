@@ -3,413 +3,133 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Joaquín & Karime — Riviera Maya</title>
-    
-    <!-- Google Fonts: tipografía ultra legible -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
-
+    <title>Fotos de la Boda - Joaquín & Karime</title>
     <style>
-        :root {
-            --bg: #faf8f5;
-            --text: #2c2a29;
-            --muted: #6b655d;
-            --accent: #b09e80;
-            --card-bg: #ffffff;
-            --border: #ebd3c8;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: 'Montserrat', sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            line-height: 1.6;
-            text-align: center;
-            font-weight: 300;
-        }
-
-        h1, h2, h3 {
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 500;
-        }
-
-        /* Hero */
-        header {
-            min-height: 75vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 3rem 1.5rem;
-            background: linear-gradient(180deg, rgba(250,248,245,0.4) 0%, rgba(250,248,245,1) 100%),
-                        url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80') center/cover no-repeat;
-        }
-
-        .subtitle {
-            font-size: 0.9rem;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            color: var(--muted);
-            margin-bottom: 1.5rem;
-            font-weight: 400;
-        }
-
-        .names {
-            font-size: clamp(2.5rem, 6vw, 4.5rem);
-            line-height: 1.2;
-            margin-bottom: 1.5rem;
-            color: var(--text);
-            font-weight: 600;
-        }
-
-        .details-hero {
-            font-size: 1rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            color: var(--text);
-            border-top: 1px solid var(--accent);
-            border-bottom: 1px solid var(--accent);
-            padding: 0.8rem 2rem;
-            font-weight: 400;
-        }
-
-        /* Sections */
-        section {
-            padding: 3.5rem 1.5rem;
-            max-width: 750px;
-            margin: 0 auto;
-        }
-
-        .section-title {
-            font-size: 1.8rem;
-            color: var(--text);
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-        }
-
-        .section-desc {
-            color: var(--muted);
-            font-size: 0.95rem;
-            margin-bottom: 2rem;
-        }
-
-        /* Countdown */
-        .countdown {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            margin-top: 1rem;
-        }
-
-        .time-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .time-num {
-            font-size: 2.2rem;
-            line-height: 1;
-            color: var(--accent);
-            font-weight: 600;
-        }
-
-        .time-label {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--muted);
-            margin-top: 0.4rem;
-            font-weight: 400;
-        }
-
-        /* Upload Area */
-        .upload-box {
-            background: var(--card-bg);
-            border: 2px dashed var(--accent);
-            border-radius: 8px;
-            padding: 2.5rem 1.5rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-bottom: 1.5rem;
-        }
-
-        .upload-box:hover {
-            background: #faf6f0;
-        }
-
-        .upload-icon {
-            font-size: 2rem;
-            color: var(--accent);
-            margin-bottom: 0.5rem;
-        }
-
-        #fileInput {
-            display: none;
-        }
-
-        .input-name {
-            width: 100%;
-            max-width: 350px;
-            padding: 0.9rem;
-            margin-bottom: 1.5rem;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            font-family: 'Montserrat', sans-serif;
-            font-size: 0.95rem;
-            text-align: center;
-            background: #fff;
-        }
-
-        /* Gallery Grid */
-        .gallery {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-            gap: 15px;
-            margin-top: 2rem;
-        }
-
-        .photo-card {
-            background: var(--card-bg);
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.06);
-            display: flex;
-            flex-direction: column;
-            position: relative;
-        }
-
-        .photo-card img {
-            width: 100%;
-            height: 150px;
-            object-fit: cover;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        .photo-card img:hover {
-            transform: scale(1.03);
-        }
-
-        .photo-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.6rem 0.8rem;
-            background: #fff;
-        }
-
-        .photo-author {
-            font-size: 0.8rem;
-            color: var(--muted);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            text-align: left;
-            font-weight: 400;
-        }
-
-        /* Modal Lightbox para ver foto en grande */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.85);
-            justify-content: center;
-            align-items: center;
-            padding: 1.5rem;
-        }
-
-        .modal img {
-            max-width: 90%;
-            max-height: 85vh;
-            border-radius: 6px;
-            box-shadow: 0 5px 25px rgba(0,0,0,0.5);
-        }
-
-        .modal-close {
-            position: absolute;
-            top: 20px;
-            right: 30px;
-            color: #fff;
-            font-size: 2.5rem;
-            font-weight: 300;
-            cursor: pointer;
-            background: none;
-            border: none;
-        }
-
-        footer {
-            padding: 3rem 1.5rem;
-            font-size: 0.85rem;
-            color: var(--muted);
-            letter-spacing: 1px;
-        }
-
-        @media (max-width: 600px) {
-            .countdown { gap: 1.2rem; }
-            .time-num { font-size: 1.8rem; }
-        }
+        body { font-family: Arial, sans-serif; background: #fdfbf7; color: #333; text-align: center; padding: 20px; margin: 0; }
+        .container { max-width: 500px; margin: 0 auto; background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        h1 { color: #8c7355; font-size: 24px; margin-bottom: 10px; }
+        p { color: #666; font-size: 14px; margin-bottom: 25px; }
+        input[type="file"] { display: none; }
+        .upload-btn { background: #8c7355; color: white; padding: 12px 25px; border-radius: 25px; cursor: pointer; display: inline-block; font-weight: bold; transition: background 0.3s; }
+        .upload-btn:hover { background: #6f5940; }
+        #status { margin-top: 15px; font-size: 14px; color: #555; }
+        .gallery { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 30px; }
+        .gallery img { width: 100%; height: 150px; object-fit: cover; border-radius: 8px; }
     </style>
 </head>
 <body>
 
-    <header>
-        <p class="subtitle">Nos Casamos</p>
-        <h1 class="names">Joaquín &amp; Karime</h1>
-        <p class="details-hero">31 DE OCTUBRE DE 2026<br><span style="font-size: 0.8rem; text-transform: none; letter-spacing: 1px; color: var(--muted);">Riviera Maya — Hotel Barceló</span></p>
-    </header>
-
-    <section>
-        <div class="countdown">
-            <div class="time-item"><span class="time-num" id="days">00</span><span class="time-label">Días</span></div>
-            <div class="time-item"><span class="time-num" id="hours">00</span><span class="time-label">Horas</span></div>
-            <div class="time-item"><span class="time-num" id="minutes">00</span><span class="time-label">Min</span></div>
-            <div class="time-item"><span class="time-num" id="seconds">00</span><span class="time-label">Seg</span></div>
-        </div>
-    </section>
-
-    <hr style="border: 0; border-top: 1px solid #e8e2d8; max-width: 200px; margin: 0 auto;">
-
-    <section>
-        <h2 class="section-title">Comparte tus Recuerdos</h2>
-        <p class="section-desc">Sube aquí las fotos que tomes durante nuestro gran día para conservarlas en nuestro álbum.</p>
+    <div class="container">
+        <h1>Boda Joaquín & Karime</h1>
+        <p>¡Comparte tus mejores momentos con nosotros! Sube una foto de la celebración.</p>
         
-        <input type="text" id="guestName" class="input-name" placeholder="Tu nombre o familia (Opcional)">
-
-        <div class="upload-box" onclick="document.getElementById('fileInput').click()">
-            <div class="upload-icon">📷</div>
-            <p style="font-size: 0.95rem; color: var(--text); font-weight: 400;">Haz clic o arrastra tus fotos aquí</p>
-            <span style="font-size: 0.8rem; color: var(--muted);">Formatos aceptados: JPG, PNG</span>
-            <input type="file" id="fileInput" accept="image/*" multiple onchange="handleFiles(files)">
-        </div>
-
-        <div class="gallery" id="gallery"></div>
-    </section>
-
-    <!-- Modal para ver imagen en grande -->
-    <div class="modal" id="photoModal" onclick="cerrarModal()">
-        <button class="modal-close" onclick="cerrarModal()">&times;</button>
-        <img id="modalImg" src="" alt="Foto en grande">
+        <label for="fotoInput" class="upload-btn">Seleccionar o Tomar Foto</label>
+        <input type="file" id="fotoInput" accept="image/*" capture="environment">
+        
+        <div id="status"></div>
     </div>
 
-    <footer>
-        <p>J &amp; K — 2026</p>
-    </footer>
+    <div class="container" style="margin-top: 20px;">
+        <h3>Galería en vivo</h3>
+        <div class="gallery" id="galeriaContainer"></div>
+    </div>
 
-    <script>
-        const CLOUD_NAME = "jiialc0i"; 
-        const UPLOAD_PRESET = "boda_upload"; 
+    <!-- SDKs de Firebase -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        const weddingDate = new Date("Oct 31, 2026 16:00:00").getTime();
+        // Tu configuración de Firebase que obtuviste hace un momento
+        const firebaseConfig = {
+          apiKey: "AIzaSyDzxP_p70Ml5La56yur6PlYpKaLNC1qUWI",
+          authDomain: "boda-joaquin-karime.firebaseapp.com",
+          projectId: "boda-joaquin-karime",
+          storageBucket: "boda-joaquin-karime.firebasestorage.app",
+          messagingSenderId: "881571294724",
+          appId: "1:881571294724:web:4e88bc6464a42fb16d8f51"
+        };
 
-        // Cuenta regresiva
-        setInterval(() => {
-            const now = new Date().getTime();
-            const dist = weddingDate - now;
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
 
-            if (dist > 0) {
-                document.getElementById("days").innerText = Math.floor(dist / (1000 * 60 * 60 * 24)).toString().padStart(2, '0');
-                document.getElementById("hours").innerText = Math.floor((dist % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2, '0');
-                document.getElementById("minutes").innerText = Math.floor((dist % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
-                document.getElementById("seconds").innerText = Math.floor((dist % (1000 * 60)) / 1000).toString().padStart(2, '0');
-            }
-        }, 1000);
+        const fotoInput = document.getElementById('fotoInput');
+        const statusDiv = document.getElementById('status');
+        const galeriaContainer = document.getElementById('galeriaContainer');
 
-        // Abrir imagen en grande
-        function abrirModal(url) {
-            document.getElementById("modalImg").src = url;
-            document.getElementById("photoModal").style.display = "flex";
-        }
+        // Función para comprimir la imagen antes de subirla para que encaje perfecto en Firestore
+        function comprimirImagen(file, maxWidth = 800, quality = 0.7) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.src = event.target.result;
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
 
-        function cerrarModal() {
-            document.getElementById("photoModal").style.display = "none";
-        }
+                        if (width > maxWidth) {
+                            height = Math.round((height * maxWidth) / width);
+                            width = maxWidth;
+                        }
 
-        // Lista oficial de fotos de la boda visible para TODO EL MUNDO exactamente igual
-        // (Aquí puedes agregar o quitar los links directos de Cloudinary que quieras mostrar)
-        const fotosOficiales = [
-            { 
-                url: "https://res.cloudinary.com/" + CLOUD_NAME + "/image/upload/v1/WhatsApp_Image_2023-03-04_at_13.40.30", 
-                autor: "Invitado" 
-            },
-            { 
-                url: "https://res.cloudinary.com/" + CLOUD_NAME + "/image/upload/v1/WhatsApp_Image_2024-01-29_at_00.55.15", 
-                autor: "Invitado" 
-            },
-            { 
-                url: "https://res.cloudinary.com/" + CLOUD_NAME + "/image/upload/v1/1000559746", 
-                autor: "Joaquín" 
-            }
-        ];
-
-        function cargarGaleria() {
-            const gallery = document.getElementById("gallery");
-            gallery.innerHTML = "";
-
-            fotosOficiales.forEach(item => {
-                const card = document.createElement("div");
-                card.className = "photo-card";
-
-                const img = document.createElement("img");
-                img.src = item.url;
-                img.title = "Haz clic para ver en grande";
-                img.onclick = () => abrirModal(item.url);
-
-                const footerDiv = document.createElement("div");
-                footerDiv.className = "photo-footer";
-
-                const authorDiv = document.createElement("div");
-                authorDiv.className = "photo-author";
-                authorDiv.innerText = `📸 ${item.autor}`;
-
-                footerDiv.appendChild(authorDiv);
-                card.appendChild(img);
-                card.appendChild(footerDiv);
-                gallery.appendChild(card);
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        resolve(canvas.toDataURL('image/jpeg', quality));
+                    };
+                };
             });
         }
 
-        window.onload = cargarGaleria;
+        // Manejar la subida cuando el invitado selecciona una foto
+        fotoInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
 
-        // Subir fotos nuevas (Avisa al usuario que la foto subió y le da instrucciones claras)
-        async function handleFiles(files) {
-            const guestName = document.getElementById("guestName").value.trim() || "Invitado";
+            statusDiv.textContent = "Procesando y subiendo foto...";
+            
+            try {
+                // Comprimir y convertir a Base64
+                const base64Image = await comprimirImagen(file);
 
-            for (const file of files) {
-                const formData = new FormData();
-                formData.append("file", file);
-                formData.append("upload_preset", UPLOAD_PRESET);
+                // Guardar en Cloud Firestore
+                await addDoc(collection(db, "fotos"), {
+                    imageUrl: base64Image,
+                    timestamp: serverTimestamp()
+                });
 
-                try {
-                    let response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
-                        method: "POST",
-                        body: formData
-                    });
-
-                    let data = await response.json();
-                    
-                    if (data.secure_url) {
-                        console.log("Foto subida a Cloudinary exitosamente:", data.secure_url);
-                    }
-                } catch (error) {
-                    console.error("Error al subir la imagen:", error);
-                }
+                statusDiv.textContent = "¡Foto subida con éxito! Gracias por compartir.";
+                fotoInput.value = "";
+                cargarGaleria();
+            } catch (error) {
+                console.error("Error al subir:", error);
+                statusDiv.textContent = "Hubo un error al subir la foto. Intenta de nuevo.";
             }
-            alert("¡Foto(s) subida(s) con éxito a la nube! Gracias por compartir este momento.");
-            document.getElementById("fileInput").value = ""; 
+        });
+
+        // Cargar las fotos existentes en la galería
+        async function cargarGaleria() {
+            try {
+                const querySnapshot = await getDocs(collection(db, "fotos"));
+                galeriaContainer.innerHTML = "";
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    if (data.imageUrl) {
+                        const img = document.createElement('img');
+                        img.src = data.imageUrl;
+                        galeriaContainer.appendChild(img);
+                    }
+                });
+            } catch (error) {
+                console.error("Error al cargar galería:", error);
+            }
         }
+
+        // Cargar al abrir la página
+        cargarGaleria();
     </script>
 </body>
 </html>
