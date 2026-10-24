@@ -88,7 +88,6 @@
             margin-bottom: 20px;
         }
 
-        /* Campo de texto para el nombre del invitado */
         .input-nombre {
             width: 80%;
             max-width: 350px;
@@ -178,7 +177,6 @@
             transform: scale(1.06);
         }
 
-        /* Etiqueta flotante con el nombre del invitado sobre la foto miniatura */
         .guest-tag {
             position: absolute;
             bottom: 0;
@@ -195,7 +193,6 @@
             backdrop-filter: blur(2px);
         }
 
-        /* Botón de borrar (Administrador) */
         .delete-btn {
             display: none;
             position: absolute;
@@ -216,7 +213,6 @@
         }
         .admin-mode .delete-btn { display: block; }
 
-        /* Botón Cargar Más */
         .load-more-section {
             margin: 30px 0;
         }
@@ -239,7 +235,7 @@
             color: white;
         }
 
-        /* Modal / Visor de imagen grande con flechas */
+        /* Modal / Visor */
         #modal {
             display: none;
             position: fixed;
@@ -272,7 +268,6 @@
             object-fit: contain;
         }
 
-        /* Texto del autor dentro del modal */
         #modalCaption {
             color: #f2ebd9;
             font-family: 'Playfair Display', serif;
@@ -349,7 +344,6 @@
         <h3>Comparte tus recuerdos</h3>
         <p>Sube las fotos que captures durante nuestra celebración.</p>
         
-        <!-- Input para el nombre del invitado -->
         <input type="text" id="nombreInvitado" class="input-nombre" placeholder="Tu nombre o familia (Opcional)">
         <br>
         
@@ -364,7 +358,6 @@
         <h3>Galería de Invitados</h3>
         <div class="gallery" id="galeriaContainer"></div>
         
-        <!-- Botón Cargar Más -->
         <div class="load-more-section" id="loadMoreSection" style="display: none;">
             <button class="load-more-btn" id="loadMoreBtn">Cargar más fotos</button>
         </div>
@@ -374,7 +367,7 @@
         </div>
     </div>
 
-    <!-- Modal para imagen ampliada con flechas y nombre -->
+    <!-- Modal para imagen ampliada -->
     <div id="modal">
         <span id="closeModal">&times;</span>
         <button class="nav-arrow" id="prevBtn">&#10094;</button>
@@ -385,7 +378,7 @@
         <div id="modalCaption"></div>
     </div>
 
-    <!-- SDKs de Firebase y lógica de Cloudinary -->
+    <!-- SDKs de Firebase y lógica -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -402,7 +395,6 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Datos de Cloudinary
         const cloudName = "jiialc0i";
         const uploadPreset = "boda_upload";
 
@@ -455,7 +447,7 @@
 
                 statusDiv.textContent = "¡Foto subida con éxito! 🌴";
                 fotoInput.value = "";
-                nombreInput.value = ""; // Limpiamos el campo de texto
+                nombreInput.value = "";
                 await cargarGaleriaCompleta();
             } catch (error) {
                 console.error("Error al subir:", error);
@@ -505,7 +497,6 @@
                 img.src = fotoObj.url;
                 img.onclick = () => abrirModal(index);
 
-                // Pequeña etiqueta inferior con el nombre del invitado
                 const tag = document.createElement('div');
                 tag.className = 'guest-tag';
                 tag.textContent = `📷 ${fotoObj.autor}`;
@@ -539,7 +530,7 @@
             renderizarGaleriaVisual();
         };
 
-        // Control del Modal, Flechas y Nombre del Autor
+        // Control del Modal, Flechas y Botón "Atrás" del Celular
         let currentIndex = 0;
 
         function abrirModal(index) {
@@ -547,11 +538,29 @@
             modalImg.src = listaFotos[currentIndex].url;
             modalCaption.textContent = `📷 Subida por: ${listaFotos[currentIndex].autor}`;
             modal.style.display = "flex";
+
+            // Truco: Agregamos un estado al historial del navegador para interceptar el botón "Atrás"
+            history.pushState({ modalOpen: true }, "");
         }
 
-        closeModal.onclick = () => { modal.style.display = "none"; }
-        
-        window.onclick = (e) => { if (e.target == modal) modal.style.display = "none"; }
+        function cerrarModal() {
+            modal.style.display = "none";
+        }
+
+        // Si el usuario presiona el botón "Atrás" del celular o navegador
+        window.onpopstate = () => {
+            if (modal.style.display === "flex") {
+                cerrarModal(); // Si el modal estaba abierto, solo lo cierra sin sacarlo de la página
+            }
+        };
+
+        closeModal.onclick = () => { 
+            cerrarModal(); 
+            // Si cierran con la "X", regresamos el historial para mantenerlo sincronizado
+            if (window.history.state && window.history.state.modalOpen) {
+                history.back();
+            }
+        };
 
         nextBtn.onclick = (e) => {
             e.stopPropagation();
