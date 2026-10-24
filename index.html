@@ -85,7 +85,26 @@
         .upload-card p {
             color: var(--color-light);
             font-size: 13px;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
+        }
+
+        /* Campo de texto para el nombre del invitado */
+        .input-nombre {
+            width: 80%;
+            max-width: 350px;
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 14px;
+            outline: none;
+            text-align: center;
+            transition: border-color 0.3s;
+        }
+
+        .input-nombre:focus {
+            border-color: var(--color-primary);
         }
 
         input[type="file"] { display: none; }
@@ -159,6 +178,23 @@
             transform: scale(1.06);
         }
 
+        /* Etiqueta flotante con el nombre del invitado sobre la foto miniatura */
+        .guest-tag {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.6);
+            color: #fff;
+            font-size: 11px;
+            padding: 4px;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            backdrop-filter: blur(2px);
+        }
+
         /* Botón de borrar (Administrador) */
         .delete-btn {
             display: none;
@@ -216,6 +252,7 @@
             backdrop-filter: blur(5px);
             align-items: center;
             justify-content: center;
+            flex-direction: column;
         }
 
         .modal-content-wrapper {
@@ -224,15 +261,24 @@
             align-items: center;
             justify-content: center;
             max-width: 90%;
-            max-height: 85vh;
+            max-height: 75vh;
         }
 
         #modalImg {
             max-width: 80vw;
-            max-height: 85vh;
+            max-height: 75vh;
             border-radius: 8px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             object-fit: contain;
+        }
+
+        /* Texto del autor dentro del modal */
+        #modalCaption {
+            color: #f2ebd9;
+            font-family: 'Playfair Display', serif;
+            font-size: 18px;
+            margin-top: 15px;
+            letter-spacing: 1px;
         }
 
         #closeModal {
@@ -303,6 +349,10 @@
         <h3>Comparte tus recuerdos</h3>
         <p>Sube las fotos que captures durante nuestra celebración.</p>
         
+        <!-- Input para el nombre del invitado -->
+        <input type="text" id="nombreInvitado" class="input-nombre" placeholder="Tu nombre o familia (Opcional)">
+        <br>
+        
         <label for="fotoInput" class="upload-btn">📷 Subir Foto o Imagen</label>
         <input type="file" id="fotoInput" accept="image/*">
         
@@ -324,7 +374,7 @@
         </div>
     </div>
 
-    <!-- Modal para imagen ampliada con flechas -->
+    <!-- Modal para imagen ampliada con flechas y nombre -->
     <div id="modal">
         <span id="closeModal">&times;</span>
         <button class="nav-arrow" id="prevBtn">&#10094;</button>
@@ -332,6 +382,7 @@
             <img id="modalImg" src="">
         </div>
         <button class="nav-arrow" id="nextBtn">&#10095;</button>
+        <div id="modalCaption"></div>
     </div>
 
     <!-- SDKs de Firebase y lógica de Cloudinary -->
@@ -356,6 +407,7 @@
         const uploadPreset = "boda_upload";
 
         const fotoInput = document.getElementById('fotoInput');
+        const nombreInput = document.getElementById('nombreInvitado');
         const statusDiv = document.getElementById('status');
         const galeriaContainer = document.getElementById('galeriaContainer');
         const loadMoreSection = document.getElementById('loadMoreSection');
@@ -363,6 +415,7 @@
         
         const modal = document.getElementById('modal');
         const modalImg = document.getElementById('modalImg');
+        const modalCaption = document.getElementById('modalCaption');
         const closeModal = document.getElementById('closeModal');
         const prevBtn = document.getElementById('prevBtn');
         const nextBtn = document.getElementById('nextBtn');
@@ -371,14 +424,16 @@
         let isAdmin = false;
         const ADMIN_PASSWORD = "boda2026";
 
-        let listaFotos = []; // Almacena todas las fotos para las flechas del modal
-        let itemsVisibleCount = 12; // Cuántas fotos muestra visualmente al inicio
-        const PHOTOS_PER_PAGE = 12; // Cuántas fotos se agregan al presionar "Cargar más"
+        let listaFotos = []; 
+        let itemsVisibleCount = 12; 
+        const PHOTOS_PER_PAGE = 12; 
 
-        // Subida de foto
+        // Subida de foto con nombre
         fotoInput.addEventListener('change', async (e) => {
             const file = e.target.files[0];
             if (!file) return;
+
+            const autor = nombreInput.value.trim() !== "" ? nombreInput.value.trim() : "Invitado especial";
 
             statusDiv.textContent = "Subiendo recuerdo a la nube...";
             try {
@@ -394,11 +449,13 @@
 
                 await addDoc(collection(db, "fotos"), {
                     imageUrl: data.secure_url,
+                    autor: autor,
                     timestamp: serverTimestamp()
                 });
 
                 statusDiv.textContent = "¡Foto subida con éxito! 🌴";
                 fotoInput.value = "";
+                nombreInput.value = ""; // Limpiamos el campo de texto
                 await cargarGaleriaCompleta();
             } catch (error) {
                 console.error("Error al subir:", error);
@@ -406,7 +463,6 @@
             }
         });
 
-        // Descarga todas las fotos de Firebase una sola vez para que las flechas funcionen de corrido
         async function cargarGaleriaCompleta() {
             try {
                 const q = query(collection(db, "fotos"), orderBy("timestamp", "desc"));
@@ -416,7 +472,11 @@
                 querySnapshot.forEach((documento) => {
                     const data = documento.data();
                     if (data.imageUrl) {
-                        listaFotos.push({ id: documento.id, url: data.imageUrl });
+                        listaFotos.push({ 
+                            id: documento.id, 
+                            url: data.imageUrl, 
+                            autor: data.autor || "Invitado" 
+                        });
                     }
                 });
 
@@ -426,7 +486,6 @@
             }
         }
 
-        // Renderiza en pantalla solo la cantidad permitida por la paginación visual
         function renderizarGaleriaVisual() {
             galeriaContainer.innerHTML = "";
 
@@ -436,7 +495,6 @@
                 return;
             }
 
-            // Mostrar el bloque de fotos correspondiente al límite visible actual
             const fotosAMostrar = listaFotos.slice(0, itemsVisibleCount);
 
             fotosAMostrar.forEach((fotoObj, index) => {
@@ -445,7 +503,12 @@
 
                 const img = document.createElement('img');
                 img.src = fotoObj.url;
-                img.onclick = () => abrirModal(index); // Abre el modal con el índice exacto de la lista total
+                img.onclick = () => abrirModal(index);
+
+                // Pequeña etiqueta inferior con el nombre del invitado
+                const tag = document.createElement('div');
+                tag.className = 'guest-tag';
+                tag.textContent = `📷 ${fotoObj.autor}`;
 
                 const deleteButton = document.createElement('button');
                 deleteButton.className = 'delete-btn';
@@ -459,11 +522,11 @@
                 };
 
                 item.appendChild(img);
+                item.appendChild(tag);
                 item.appendChild(deleteButton);
                 galeriaContainer.appendChild(item);
             });
 
-            // Mostrar u ocultar el botón "Cargar más"
             if (itemsVisibleCount < listaFotos.length) {
                 loadMoreSection.style.display = "block";
             } else {
@@ -476,12 +539,13 @@
             renderizarGaleriaVisual();
         };
 
-        // Control del Modal y las Flechas
+        // Control del Modal, Flechas y Nombre del Autor
         let currentIndex = 0;
 
         function abrirModal(index) {
             currentIndex = index;
             modalImg.src = listaFotos[currentIndex].url;
+            modalCaption.textContent = `📷 Subida por: ${listaFotos[currentIndex].autor}`;
             modal.style.display = "flex";
         }
 
@@ -493,12 +557,14 @@
             e.stopPropagation();
             currentIndex = (currentIndex + 1) % listaFotos.length;
             modalImg.src = listaFotos[currentIndex].url;
+            modalCaption.textContent = `📷 Subida por: ${listaFotos[currentIndex].autor}`;
         };
 
         prevBtn.onclick = (e) => {
             e.stopPropagation();
             currentIndex = (currentIndex - 1 + listaFotos.length) % listaFotos.length;
             modalImg.src = listaFotos[currentIndex].url;
+            modalCaption.textContent = `📷 Subida por: ${listaFotos[currentIndex].autor}`;
         };
 
         // Modo Administrador
@@ -519,7 +585,6 @@
             }
         };
 
-        // Carga inicial al abrir la página
         cargarGaleriaCompleta();
     </script>
 </body>
