@@ -381,7 +381,7 @@
     <!-- SDKs de Firebase y lógica -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, getDoc, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
           apiKey: "AIzaSyDzxP_p70Ml5La56yur6PlYpKaLNC1qUWI",
@@ -414,7 +414,6 @@
         const adminBtn = document.getElementById('adminBtn');
 
         let isAdmin = false;
-        const ADMIN_PASSWORD = "boda2026";
 
         let listaFotos = []; 
         let itemsVisibleCount = 12; 
@@ -530,7 +529,7 @@
             renderizarGaleriaVisual();
         };
 
-        // Control del Modal, Flechas y Botón "Atrás" del Celular
+        // Control del Modal, Flechas y Botón "Atrás"
         let currentIndex = 0;
 
         function abrirModal(index) {
@@ -538,8 +537,6 @@
             modalImg.src = listaFotos[currentIndex].url;
             modalCaption.textContent = `📷 Subida por: ${listaFotos[currentIndex].autor}`;
             modal.style.display = "flex";
-
-            // Truco: Agregamos un estado al historial del navegador para interceptar el botón "Atrás"
             history.pushState({ modalOpen: true }, "");
         }
 
@@ -547,16 +544,14 @@
             modal.style.display = "none";
         }
 
-        // Si el usuario presiona el botón "Atrás" del celular o navegador
         window.onpopstate = () => {
             if (modal.style.display === "flex") {
-                cerrarModal(); // Si el modal estaba abierto, solo lo cierra sin sacarlo de la página
+                cerrarModal();
             }
         };
 
         closeModal.onclick = () => { 
             cerrarModal(); 
-            // Si cierran con la "X", regresamos el historial para mantenerlo sincronizado
             if (window.history.state && window.history.state.modalOpen) {
                 history.back();
             }
@@ -576,16 +571,33 @@
             modalCaption.textContent = `📷 Subida por: ${listaFotos[currentIndex].autor}`;
         };
 
-        // Modo Administrador
-        adminBtn.onclick = () => {
+        // Modo Administrador consultando la contraseña directamente desde Firestore
+        adminBtn.onclick = async () => {
             if (!isAdmin) {
                 const pass = prompt("Introduce la contraseña de administrador:");
-                if (pass === ADMIN_PASSWORD) {
-                    isAdmin = true;
-                    adminBtn.textContent = "Cerrar Modo Administrador";
-                    renderizarGaleriaVisual();
-                } else if (pass !== null) {
-                    alert("Contraseña incorrecta.");
+                if (pass === null) return;
+
+                try {
+                    // Consultamos el documento de configuración en Firestore
+                    const docRef = doc(db, "configuracion", "admin");
+                    const docSnap = await getDoc(docRef);
+
+                    if (docSnap.exists()) {
+                        const passwordCorrecta = docSnap.data().password;
+
+                        if (pass === passwordCorrecta) {
+                            isAdmin = true;
+                            adminBtn.textContent = "Cerrar Modo Administrador";
+                            renderizarGaleriaVisual();
+                        } else {
+                            alert("Contraseña incorrecta.");
+                        }
+                    } else {
+                        alert("No se encontró la configuración de administrador en la base de datos.");
+                    }
+                } catch (error) {
+                    console.error("Error al verificar contraseña:", error);
+                    alert("Error al verificar la contraseña.");
                 }
             } else {
                 isAdmin = false;
