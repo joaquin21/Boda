@@ -64,7 +64,7 @@
         .main-container {
             width: 90%;
             max-width: 600px;
-            margin: -30px auto 40px auto;
+            margin: 20px auto;
             background: var(--color-card);
             padding: 30px;
             border-radius: 16px;
@@ -419,7 +419,7 @@
         let itemsVisibleCount = 12; 
         const PHOTOS_PER_PAGE = 12; 
 
-       // Subida de foto con nombre
+        // Subida de foto con nombre
         fotoInput.addEventListener('change', async (e) => {
             const file = e.target.files[0];
             if (!file) return;
@@ -427,11 +427,9 @@
             // Validar que el archivo sea estrictamente una imagen
             if (!file.type.startsWith('image/')) {
                 alert("Por favor selecciona un archivo de imagen válido.");
-                fotoInput.value = ""; // Limpiamos el input
+                fotoInput.value = ""; 
                 return;
             }
-
-            const autor = nombreInput.value.trim() !== "" ? nombreInput.value.trim() : "Invitado especial";
 
             const autor = nombreInput.value.trim() !== "" ? nombreInput.value.trim() : "Invitado especial";
 
@@ -587,7 +585,6 @@
                 if (pass === null) return;
 
                 try {
-                    // Consultamos el documento de configuración en Firestore
                     const docRef = doc(db, "configuracion", "admin");
                     const docSnap = await getDoc(docRef);
 
