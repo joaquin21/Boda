@@ -135,12 +135,44 @@
             font-weight: 500;
         }
 
-        /* Sección de Galería */
-        .gallery-section {
+        /* Contenedor general que alinea los laterales y la galería */
+        .gallery-wrapper-layout {
+            display: flex;
+            align-items: center;
+            justify-content: center;
             width: 90%;
-            max-width: 800px;
+            max-width: 1200px;
             margin: 0 auto 50px auto;
+        }
+
+        /* Estilo para las imágenes decorativas de los lados */
+        .side-decoration {
+            width: 160px;
+            height: 350px;
+            object-fit: cover;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+            opacity: 0.95;
+        }
+
+        .left-decor {
+            margin-right: 25px;
+        }
+
+        .right-decor {
+            margin-left: 25px;
+        }
+
+        /* Sección de Galería con fondo personalizado */
+        .gallery-section {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
             text-align: center;
+            background-color: #f2ebd9; /* Fondo estilo arena/marfil */
+            padding: 30px 20px;
+            border-radius: 16px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.03);
         }
 
         .gallery-section h3 {
@@ -152,7 +184,7 @@
 
         .gallery {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
             gap: 15px;
         }
 
@@ -328,6 +360,16 @@
             border-color: var(--color-primary);
             color: var(--color-primary);
         }
+
+        /* En celulares o pantallas pequeñas, ocultamos los laterales automáticamente */
+        @media (max-width: 950px) {
+            .side-decoration {
+                display: none;
+            }
+            .gallery-wrapper-layout {
+                width: 90%;
+            }
+        }
     </style>
 </head>
 <body>
@@ -353,18 +395,26 @@
         <div id="status"></div>
     </div>
 
-    <!-- Galería en Vivo -->
-    <div class="gallery-section">
-        <h3>Galería de Invitados</h3>
-        <div class="gallery" id="galeriaContainer"></div>
-        
-        <div class="load-more-section" id="loadMoreSection" style="display: none;">
-            <button class="load-more-btn" id="loadMoreBtn">Cargar más fotos</button>
+    <!-- Galería en Vivo con Marcos Laterales -->
+    <div class="gallery-wrapper-layout">
+        <!-- Imagen decorativa izquierda -->
+        <img src="https://res.cloudinary.com/jiialc0i/image/upload/v.../foto_izquierda.jpg" class="side-decoration left-decor" alt="Decoración Boda">
+
+        <div class="gallery-section">
+            <h3>Galería de Invitados</h3>
+            <div class="gallery" id="galeriaContainer"></div>
+            
+            <div class="load-more-section" id="loadMoreSection" style="display: none;">
+                <button class="load-more-btn" id="loadMoreBtn">Cargar más fotos</button>
+            </div>
+            
+            <div class="admin-section">
+                <button class="admin-link" id="adminBtn">Modo Administrador</button>
+            </div>
         </div>
-        
-        <div class="admin-section">
-            <button class="admin-link" id="adminBtn">Modo Administrador</button>
-        </div>
+
+        <!-- Imagen decorativa derecha -->
+        <img src="https://res.cloudinary.com/jiialc0i/image/upload/v.../foto_derecha.jpg" class="side-decoration right-decor" alt="Decoración Boda">
     </div>
 
     <!-- Modal para imagen ampliada -->
